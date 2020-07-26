@@ -73,24 +73,29 @@ yargs
             console.log("Add note in file");
             let notes = loadDatas('datas/notes.json');
             let exist;
+            let noteToDelete;
             for (let i = 0; i<notes.length; i++) {
                 if (notes[i].title.includes(argv.title) == false) {
                     exist = false;
                 }
                 else {
                     exist = true;
+                    noteToDelete = i;
+                    console.log(i);
                     break;
                 }
             };
+            
             if (exist == false) {
-                notes.push({"title" : argv.title, "body" : argv.body});
-                fs.writeFile('datas/notes.json', JSON.stringify(notes), (err) => {
-                    if (err) throw err;
-                    console.log("New note Create");
-                });
+                console.log(`the ${argv.title} note does not exist!`)
+
             }
             else {
-                console.log(`the ${argv.title} note already exists!`)
+                notes.splice(noteToDelete, 1);
+                fs.writeFile('datas/notes.json', JSON.stringify(notes), (err) => {
+                    if (err) throw err;
+                    console.log(`the ${argv.title} note has been deleted`);
+                });
             }
         }
     }).argv
