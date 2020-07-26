@@ -37,20 +37,25 @@ yargs
         handler: (argv) => {
             console.log("Add note in file");
             let notes = loadDatas('datas/notes.json');
-            console.log(argv.title);
-            let titleArray = [];
-            let unique = [];
+            let exist;
             for (let i = 0; i<notes.length; i++) {
-                titleArray.push(notes[i].title);
-                unique = [...new Set(titleArray)];
-                notes[i].title = unique[i];
+                if (notes[i].title.includes(argv.title) == false) {
+                    exist = false;
+                }
+                else {
+                    exist = true;
+                    break;
+                }
             };
-            console.log(titleArray);
-            console.log(unique);
-            notes.push({"title" : argv.title, "body" : argv.body});
-            fs.writeFile('datas/notes.json', JSON.stringify(notes), (err) => {
-                if (err) throw err;
-                console.log("New note Create");
-            })
+            if (exist == false) {
+                notes.push({"title" : argv.title, "body" : argv.body});
+                fs.writeFile('datas/notes.json', JSON.stringify(notes), (err) => {
+                    if (err) throw err;
+                    console.log("New note Create");
+                });
+            }
+            else {
+                console.log(`the ${argv.title} note already exists!`)
+            }
         }
     }).argv
