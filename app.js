@@ -12,7 +12,7 @@ yargs
         command: 'list',
         describe: 'List all note--title',
         handler: () => {
-            console.log(chalk.bgBlue('List all note--title'));
+            console.log(chalk.bgBlue('List all notes'));
             let notes = loadDatas('datas/notes.json');
             for (let i=0; i < notes.length; i++) {
                 console.log(chalk.blue(notes[i].title));
@@ -70,7 +70,7 @@ yargs
             }
         },
         handler: (argv) => {
-            console.log("Add note in file");
+            console.log("Remove note in file");
             let notes = loadDatas('datas/notes.json');
             let exist;
             let noteToDelete;
@@ -81,20 +81,56 @@ yargs
                 else {
                     exist = true;
                     noteToDelete = i;
-                    console.log(i);
                     break;
                 }
             };
-            
+
             if (exist == false) {
-                console.log(`the ${argv.title} note does not exist!`)
+                console.log(chalk.red(`the ${argv.title} note does not exist!`))
 
             }
             else {
                 notes.splice(noteToDelete, 1);
                 fs.writeFile('datas/notes.json', JSON.stringify(notes), (err) => {
                     if (err) throw err;
-                    console.log(`the ${argv.title} note has been deleted`);
+                    console.log(chalk.green(`the ${argv.title} note has been deleted`));
+                });
+            }
+        }
+    })
+    .command({
+        command: "read",
+        describe: 'Display a note',
+        builder: {
+            title: {
+                describe: "Add the title of the note to display",
+                demandOption: true,
+                type: "string"
+            }
+        },
+        handler: (argv) => {
+            console.log(chalk.bgBlue("Display note in file"));
+            let notes = loadDatas('datas/notes.json');
+            let exist;
+            let noteToDisplay;
+            for (let i = 0; i<notes.length; i++) {
+                if (notes[i].title.includes(argv.title) == false) {
+                    exist = false;
+                }
+                else {
+                    exist = true;
+                    noteToDisplay = i;
+                    break;
+                }
+            };
+            if (exist == false) {
+                console.log(chalk.red(`the ${argv.title} note does not exist!`))
+
+            }
+            else {
+                fs.writeFile('datas/notes.json', JSON.stringify(notes), (err) => {
+                    if (err) throw err;
+                    console.log(chalk.green(`${notes[noteToDisplay].title}: ${notes[noteToDisplay].body}`));
                 });
             }
         }
